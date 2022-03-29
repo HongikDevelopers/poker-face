@@ -1,14 +1,24 @@
 package com.fourtrashes.pokerface.core.game;
 
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 public class GameManagerImpl implements GameManager {
 
-    // CardDeck은 singleton으로 관리되면 안됌
+    ConcurrentMap<String, UserStatus> players = new ConcurrentHashMap<>();
     CardDeck cardDeck = new CardDeckImpl();
+
+    public GameManagerImpl(ConcurrentMap<String, Object> userList){
+        Iterator<String> sessionIds = userList.keySet().iterator();
+        while (sessionIds.hasNext()) {
+            String sessionId = sessionIds.next();
+            players.put(sessionId, new UserStatus());
+        }
+    }
 
     @Override
     public void startGame() {
-
-        checkReady();
 
         cardDeck.shuffle();
 
@@ -45,14 +55,31 @@ public class GameManagerImpl implements GameManager {
         endGame();
     }
 
-    public void checkReady() {
-
+    @Override
+    public void ready(String sessionId) {
+        players.get(sessionId).setReady(true);
+        if(isAllPlayerReady()){
+            startGame();
+        }
     }
 
+    private boolean isAllPlayerReady(){
+        Iterator<String> sessionIds = players.keySet().iterator();
+        while (sessionIds.hasNext()) {
+            String sessionId = sessionIds.next();
+            if(!players.get(sessionId).isReady()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public void firstDeal() {
 
     }
 
+    @Override
     public void lastDeal(){
 
     }
@@ -79,6 +106,11 @@ public class GameManagerImpl implements GameManager {
 
     @Override
     public void settle() {
+
+    }
+
+    @Override
+    public void getUserTurn(){
 
     }
 }
