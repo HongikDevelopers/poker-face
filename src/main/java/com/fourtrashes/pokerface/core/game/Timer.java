@@ -6,5 +6,5 @@ public interface Timer {
     LocalDateTime setTime();
     LocalDateTime getCurrentTime();
     void reset();
-    void syncTime();
+    void sendTime();
 }
