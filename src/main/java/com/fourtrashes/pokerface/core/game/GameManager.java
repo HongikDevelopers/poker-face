@@ -11,4 +11,5 @@ public interface GameManager {
     void setTimer();
     void settle();
     void getUserTurn();
+    void setUser(String sessionId);
 }

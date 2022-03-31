@@ -9,14 +9,6 @@ public class GameManagerImpl implements GameManager {
     ConcurrentMap<String, UserStatus> players = new ConcurrentHashMap<>();
     CardDeck cardDeck = new CardDeckImpl();
 
-    public GameManagerImpl(ConcurrentMap<String, Object> userList){
-        Iterator<String> sessionIds = userList.keySet().iterator();
-        while (sessionIds.hasNext()) {
-            String sessionId = sessionIds.next();
-            players.put(sessionId, new UserStatus());
-        }
-    }
-
     @Override
     public void startGame() {
 
@@ -112,5 +104,10 @@ public class GameManagerImpl implements GameManager {
     @Override
     public void getUserTurn(){
 
+    }
+
+    @Override
+    public void setUser(String sessionId){
+        players.put(sessionId, new UserStatus());
     }
 }
