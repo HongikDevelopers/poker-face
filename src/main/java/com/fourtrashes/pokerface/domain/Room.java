@@ -21,10 +21,10 @@ public class Room extends BaseDomain {
     private ConcurrentHashMap<String, Object> userList;
     private GameManager gameManager;
 
-    public Room(String url, Integer capacity) {
+    public Room(String url, Integer capacity, GameManager gameManager) {
         this.url = url;
         this.capacity = capacity;
         this.userList = new ConcurrentHashMap<>();
-        this.gameManager = new GameManagerImpl(userList);
+        this.gameManager = gameManager;
     }
 }
