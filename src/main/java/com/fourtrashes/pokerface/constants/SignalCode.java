@@ -5,7 +5,7 @@ public interface SignalCode {
         JOIN("join"),
         OFFER("offer"),
         ANSWER("answer"),
-        ICE("ICE");
+        ICE("ice");
 
         private String value;
         Message(String value) {

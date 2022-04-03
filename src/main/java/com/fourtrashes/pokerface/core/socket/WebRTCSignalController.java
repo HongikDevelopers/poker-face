@@ -1,33 +1,63 @@
 package com.fourtrashes.pokerface.core.socket;
 
+import com.fourtrashes.pokerface.constants.SignalCode;
 import com.fourtrashes.pokerface.domain.Room;
 import com.fourtrashes.pokerface.dto.SignalingDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class WebRTCSignalController {
     private final SimpMessagingTemplate messagingTemplate;
-    // 차후 레디스로 변경
-    private Map<String, Object> roomCashMap = new HashMap<>();
+    private final ConcurrentHashMap<String, Object> usersRoomInfoList;
+    private final ConcurrentHashMap<Integer, Room> roomList;
 
-    // 차후 DB에서 가져오도록 변경
-    private Map<Long, Room> roomList = new HashMap<>();
+    // TODO : Add Payload Validator
+    @MessageMapping(value = "/webrtc/room/{roomId}")
+    public void sendRtcSignal(@DestinationVariable Integer roomId,
+                              @Payload SignalingDTO request,
+                              SimpMessageHeaderAccessor header) {
 
-    @MessageMapping(value = "/join/room/{roomId}")
-    public void joinRoom(@DestinationVariable("roomId") Long roomId,
-                         SimpMessageHeaderAccessor header) {
+        messagingTemplate.setUserDestinationPrefix("/user");
+        log.info(header.getSessionId());
+        log.info(request.toString());
+        String sessionId = header.getSessionId();
+        isValid(roomId, sessionId);
+        String requestType = request.getType();
+        SignalingDTO response = new SignalingDTO(sessionId, requestType);
+
+        if (requestType.equals(SignalCode.Message.JOIN.getValue())) {
+            messagingTemplate.convertAndSend("/sub/room/" + roomId, response);
+        } else {
+            /* TODO : stack over flow 정보 보고 해결했으나 맞는 방식인지, 현재 방식처럼 헤더를 추가해서 보내는 경우
+             *    destination Resolver가 어떻게 동작되는지 정확히 파악이 필요함.
+             *    DOC 상에서는 userName, destination, payload 세가지 인자로 정보를 보내면
+             *    UserDestinationResolver가 동작해서 SimpUserRegistry 에서 sessionId (userName)추출해서, 알맞은 end point로
+             *    suffix 를 알아서 처리해준다고 하는데.. 일단 현재 상태에서는 connection 성립 이후에도 SimpUserRegistry가 항상 비어있음
+             *    차후 실제 User, Login 구현 이후 SimpUserRegistry, SimpUser 구현체 구현후 빈으로 등록후 테스트 필요
+             *    현재 방식은 header를 추가해서 보내는 방식인데 setSessionId를 통해 설정한 sessionId를 destination 처리해서 보내는 듯함.
+             *  */
+            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+            headerAccessor.setSessionId(request.getTo());
+            response.setSdp(request.getSdp());
+            messagingTemplate.convertAndSendToUser(request.getTo(), "/queue/sub/test", response, headerAccessor.getMessageHeaders());
+        }
+    }
+
+    private void isValid(int roomId, String sessionId) {
         Object room = roomList.get(roomId);
-        Object userRoomMappingInfo = roomCashMap.get(header.getSessionId());
+        Object userRoomMappingInfo = usersRoomInfoList.get(sessionId);
         if (room == null) {
             /*
              TODO 예외처리
@@ -44,15 +74,5 @@ public class WebRTCSignalController {
              * 3. 게임이 진행중이지 않은 방인 경우 -> 방이 꽉 찼는지 여부에 따라 분기 처리
              * */
         }
-
-//        SignalingDTO payload = new SignalingDTO(header.getSessionId(), "SERVER",
-//                SignalCode.Message.JOIN.getValue(), roomId);
-        messagingTemplate.convertAndSend("/sub/room/" + roomId);
-    }
-
-    @MessageMapping(value = "/offer/room/{roomId}")
-    public void offer(@Payload SignalingDTO payload2, SimpMessageHeaderAccessor header) {
-//        SignalingDTO payload = new SignalingDTO(header.getSessionId(), payload2.getTo(),
-//                SignalCode.Message.JOIN.getValue(), payload2.getRoomId());
     }
 }

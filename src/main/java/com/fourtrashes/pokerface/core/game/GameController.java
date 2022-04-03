@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentMap;
 @RequiredArgsConstructor
 public class GameController {
 
-    private final ConcurrentMap<String, Room> roomList;
+    private final ConcurrentMap<Integer, Room> roomList;
 
     @MessageMapping(value = "/game/ready/{roomId}")
-    public void ready(@DestinationVariable("roomId") Long roomId, SimpMessageHeaderAccessor header){
+    public void ready(@DestinationVariable("roomId") Integer roomId, SimpMessageHeaderAccessor header){
         Room room = roomList.get(roomId);
         GameManager gameManager = room.getGameManager();
         gameManager.ready(header.getSessionId());
