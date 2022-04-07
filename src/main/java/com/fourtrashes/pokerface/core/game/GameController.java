@@ -13,11 +13,11 @@ import java.util.concurrent.ConcurrentMap;
 @RequiredArgsConstructor
 public class GameController {
 
-    private final ConcurrentMap<Integer, Room> roomList;
+    private final ConcurrentMap<String, Room> roomList;
 
-    @MessageMapping(value = "/game/ready/{roomId}")
-    public void ready(@DestinationVariable("roomId") Integer roomId, SimpMessageHeaderAccessor header){
-        Room room = roomList.get(roomId);
+    @MessageMapping(value = "/game/ready/{roomURL}")
+    public void ready(@DestinationVariable("roomURL") String roomURL, SimpMessageHeaderAccessor header){
+        Room room = roomList.get(roomURL);
         GameManager gameManager = room.getGameManager();
         gameManager.ready(header.getSessionId());
         // 전달할 메세지 타입

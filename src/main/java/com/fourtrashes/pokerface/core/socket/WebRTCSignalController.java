@@ -21,11 +21,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebRTCSignalController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ConcurrentHashMap<String, Object> usersRoomInfoList;
-    private final ConcurrentHashMap<Integer, Room> roomList;
+    private final ConcurrentHashMap<String, Room> roomList;
 
     // TODO : Add Payload Validator
-    @MessageMapping(value = "/webrtc/room/{roomId}")
-    public void sendRtcSignal(@DestinationVariable Integer roomId,
+    @MessageMapping(value = "/webrtc/room/{roomURL}")
+    public void sendRtcSignal(@DestinationVariable String roomURL,
                               @Payload SignalingDTO request,
                               SimpMessageHeaderAccessor header) {
 
@@ -33,12 +33,12 @@ public class WebRTCSignalController {
         log.info(header.getSessionId());
         log.info(request.toString());
         String sessionId = header.getSessionId();
-        isValid(roomId, sessionId);
+        isValid(roomURL, sessionId);
         String requestType = request.getType();
         SignalingDTO response = new SignalingDTO(sessionId, requestType);
 
         if (requestType.equals(SignalCode.Message.JOIN.getValue())) {
-            messagingTemplate.convertAndSend("/sub/room/" + roomId, response);
+            messagingTemplate.convertAndSend("/sub/room/" + roomURL, response);
         } else {
             /* TODO : stack over flow 정보 보고 해결했으나 맞는 방식인지, 현재 방식처럼 헤더를 추가해서 보내는 경우
              *    destination Resolver가 어떻게 동작되는지 정확히 파악이 필요함.
@@ -55,8 +55,8 @@ public class WebRTCSignalController {
         }
     }
 
-    private void isValid(int roomId, String sessionId) {
-        Object room = roomList.get(roomId);
+    private void isValid(String roomURL, String sessionId) {
+        Object room = roomList.get(roomURL);
         Object userRoomMappingInfo = usersRoomInfoList.get(sessionId);
         if (room == null) {
             /*

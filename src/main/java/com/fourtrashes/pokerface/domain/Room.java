@@ -13,14 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 public class Room extends BaseDomain {
-    private Integer id;
     private String url;
     private Integer capacity;
     private ConcurrentHashMap<String, Object> userList;
     private GameManager gameManager;
 
-    public Room(Integer id, String url, Integer capacity, GameManager gameManager) {
-        this.id = id;
+    public Room(String url, Integer capacity, GameManager gameManager) {
         this.url = url;
         this.capacity = capacity;
         this.userList = new ConcurrentHashMap<>();

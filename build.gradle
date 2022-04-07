@@ -37,6 +37,9 @@ dependencies {
 	// Lombok
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+	// util
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.0' // 차후 버전 업데이트 필요
 }
 
 tasks.named('test') {

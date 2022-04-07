@@ -1,9 +1,9 @@
 package com.fourtrashes.pokerface.service;
 
-import com.fourtrashes.pokerface.domain.Room;
+import com.fourtrashes.pokerface.dto.RoomDTO;
 
 public interface RoomService {
-    Room createRoom();
-    void joinRoom(Integer roomId, Object user);
-    void leaveRoom(Integer roomId, Object user);
+    RoomDTO.BasicResponse createRoom();
+    RoomDTO.BasicResponse joinRoom(String roomURL, Object user);
+    void leaveRoom(String roomURL, Object user);
 }

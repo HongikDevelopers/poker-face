@@ -13,7 +13,7 @@ public class RoomConfig {
      * 현재 생성된 Room들의 정보를 저장하고 있는 Map
      * */
     @Bean
-    public ConcurrentHashMap<Integer, Room> roomList() {
+    public ConcurrentHashMap<String, Room> roomList() {
         return new ConcurrentHashMap<>();
     }
 
