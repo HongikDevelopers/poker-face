@@ -8,7 +8,6 @@ public interface GameManager {
     void firstDeal();
     void deal();
     void lastDeal();
-    void setTimer();
     void settle();
     void getUserTurn();
     void setUser(String sessionId);

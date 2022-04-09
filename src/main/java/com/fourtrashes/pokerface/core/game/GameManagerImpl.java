@@ -92,11 +92,6 @@ public class GameManagerImpl implements GameManager {
     }
 
     @Override
-    public void setTimer() {
-
-    }
-
-    @Override
     public void settle() {
 
     }
