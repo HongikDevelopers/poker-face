@@ -1,6 +1,6 @@
 package com.fourtrashes.pokerface.domain;
 
-import com.fourtrashes.pokerface.core.game.GameManager;
+import com.fourtrashes.pokerface.core.game.PokerGameManager;
 import lombok.Data;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,9 +17,9 @@ public class Room extends BaseDomain {
     private String url;
     private Integer capacity;
     private ConcurrentHashMap<String, Object> userList;
-    private GameManager gameManager;
+    private PokerGameManager gameManager;
 
-    public Room(Integer id, String url, Integer capacity, GameManager gameManager) {
+    public Room(Integer id, String url, Integer capacity, PokerGameManager gameManager) {
         this.id = id;
         this.url = url;
         this.capacity = capacity;

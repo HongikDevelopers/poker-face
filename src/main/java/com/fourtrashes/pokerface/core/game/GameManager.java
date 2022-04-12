@@ -1,14 +1,8 @@
 package com.fourtrashes.pokerface.core.game;
 
+import java.util.concurrent.ConcurrentMap;
+
 public interface GameManager {
-    void startGame();
-    void endGame();
-    void ready(String sessionId);
-    void bet();
-    void firstDeal();
-    void deal();
-    void lastDeal();
+    void startGame(ConcurrentMap<String, Object> users);
     void settle();
-    void getUserTurn();
-    void setUser(String sessionId);
 }

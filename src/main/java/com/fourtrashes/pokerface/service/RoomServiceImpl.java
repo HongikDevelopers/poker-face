@@ -2,7 +2,7 @@ package com.fourtrashes.pokerface.service;
 
 import com.fourtrashes.pokerface.constants.ExceptionType;
 import com.fourtrashes.pokerface.domain.Room;
-import com.fourtrashes.pokerface.core.game.GameManagerImpl;
+import com.fourtrashes.pokerface.core.game.PokerGameManager;
 import com.fourtrashes.pokerface.exception.WebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class RoomServiceImpl implements RoomService{
     public Room createRoom() {
         Integer roomId = idGenerator.getAndIncrement();
         String roomUrl = UUID.randomUUID().toString();
-        Room newRoom = new Room(roomId, roomUrl, ROOM_LIMIT, new GameManagerImpl());
+        Room newRoom = new Room(roomId, roomUrl, ROOM_LIMIT, new PokerGameManager());
         roomList.put(roomId, newRoom);
 
         return newRoom;
