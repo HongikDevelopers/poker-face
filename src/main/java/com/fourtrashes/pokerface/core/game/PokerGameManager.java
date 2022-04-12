@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 @Getter
 public class PokerGameManager implements GameManager {
 
-    public ArrayList<Player> players;
+    private ArrayList<Player> players;
     private CardDeck cardDeck = new CardDeckImpl();
 
     // 로직변경 : 모든 유저가 레디상태가 되면 GameManager의 startGame(유저 목록)을 불러주세요.
