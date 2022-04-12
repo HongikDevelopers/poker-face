@@ -1,6 +1,7 @@
 package com.fourtrashes.pokerface.core.game;
 
 import com.fourtrashes.pokerface.domain.Room;
+import com.fourtrashes.pokerface.dto.BetAmountDTO;
 import com.fourtrashes.pokerface.dto.PlayerStateDTO;
 import com.fourtrashes.pokerface.dto.SelectCardDTO;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +50,24 @@ public class GameController {
         PokerGameManager gameManager = roomList.get(roomId).getGameManager();
         gameManager.openAndDump(header.getSessionId(), selectCardDTO.getOpenCard(), selectCardDTO.getDump());
         if(gameManager.isAllPlayerReady()){
-            gameManager.bet();
+            gameManager.startBet();
+            String nextPlayerSessionId = gameManager.getNextBetPlayer();
+
+            //배팅할 사람에게 시그널을 줘야하는데 데이터 형식을 어떻게 해야할지 판단 부탁
+            simpMessagingTemplate.convertAndSendToUser(nextPlayerSessionId, "", "");
         }
+    }
+
+    @MessageMapping(value = "/game/bet/{roomId}")
+    public void bet(@DestinationVariable("roomId") Integer roomId, @Payload BetAmountDTO betAmountDTO, SimpMessageHeaderAccessor header){
+        PokerGameManager gameManager = roomList.get(roomId).getGameManager();
+        gameManager.bet(header.getSessionId(), betAmountDTO.getType(), betAmountDTO.getAmount());
+        if(gameManager.isAllPlayerReady()){
+            gameManager.deal();
+            return;
+        }
+        String nextPlayerSessionId = gameManager.getNextBetPlayer();
+        simpMessagingTemplate.convertAndSendToUser(nextPlayerSessionId, "", "");
     }
 
 }

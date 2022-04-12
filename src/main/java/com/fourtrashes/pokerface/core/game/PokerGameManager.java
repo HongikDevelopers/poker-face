@@ -55,7 +55,16 @@ public class PokerGameManager implements GameManager {
 
     }
 
-    public void bet() {
+    public void startBet(){
+        setPlayerReady();
+    }
+
+    public String getNextBetPlayer(){
+        int turn = getUserTurn();
+        return players.get(turn).getSessionId();
+    }
+
+    public void bet(String sessionId, String type, Long amount) {
 
     }
 
@@ -85,7 +94,7 @@ public class PokerGameManager implements GameManager {
         return true;
     }
 
-    public void setPlayerReady(){
+    private void setPlayerReady(){
         for(Player player : players) {
             player.setReady(false);
         }
