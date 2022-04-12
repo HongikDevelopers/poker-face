@@ -26,4 +26,22 @@ public class Player {
     public void putInCard(int card, boolean isOpen){
         cardList.add(new Card(card, isOpen));
     }
+
+    public void openCard(int card){
+        for(Card c : cardList){
+            if(c.getCard() == card){
+                c.setOpen(true);
+                return;
+            }
+        }
+    }
+
+    public void dumpCard(int card){
+        for(int i=0;i<cardList.size();i++){
+            if(cardList.get(i).getCard() == card){
+                cardList.remove(i);
+                return;
+            }
+        }
+    }
 }

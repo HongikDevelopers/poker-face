@@ -2,9 +2,11 @@ package com.fourtrashes.pokerface.core.game;
 
 import com.fourtrashes.pokerface.domain.Room;
 import com.fourtrashes.pokerface.dto.PlayerStateDTO;
+import com.fourtrashes.pokerface.dto.SelectCardDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -39,6 +41,15 @@ public class GameController {
         for(Player player : players){
             // destination에 무엇이 들어가야 하는지 결정 필요
             simpMessagingTemplate.convertAndSendToUser(player.getSessionId(),"", new PlayerStateDTO(player));
+        }
+    }
+
+    @MessageMapping(value = "/game/firstDeal/{roomId}")
+    public void firstDeal(@DestinationVariable("roomId") Integer roomId, @Payload SelectCardDTO selectCardDTO, SimpMessageHeaderAccessor header){
+        PokerGameManager gameManager = roomList.get(roomId).getGameManager();
+        gameManager.openAndDump(header.getSessionId(), selectCardDTO.getOpenCard(), selectCardDTO.getDump());
+        if(gameManager.isAllPlayerReady()){
+            gameManager.bet();
         }
     }
 

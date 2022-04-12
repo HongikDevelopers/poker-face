@@ -11,6 +11,7 @@ public class PokerGameManager implements GameManager {
 
     private ArrayList<Player> players;
     private CardDeck cardDeck = new CardDeckImpl();
+    private int counter = 0;
 
     // 로직변경 : 모든 유저가 레디상태가 되면 GameManager의 startGame(유저 목록)을 불러주세요.
     @Override
@@ -39,6 +40,17 @@ public class PokerGameManager implements GameManager {
 
     }
 
+    public void openAndDump(String sessionId, int openCard, int dumpCard){
+        for(Player player : players){
+            if(player.getSessionId().equals(sessionId)){
+                player.setReady(true);
+                player.openCard(openCard);
+                player.dumpCard(dumpCard);
+                return;
+            }
+        }
+    }
+
     public void lastDeal(){
 
     }
@@ -62,5 +74,20 @@ public class PokerGameManager implements GameManager {
             자리 순서대로 카드가 분배될 것이므로 인원수만큼 반복 돌리면 됌.
          */
         return 0;
+    }
+
+    public boolean isAllPlayerReady(){
+        for(Player player : players){
+            if(!player.isReady()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void setPlayerReady(){
+        for(Player player : players) {
+            player.setReady(false);
+        }
     }
 }
