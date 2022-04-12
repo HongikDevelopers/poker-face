@@ -37,11 +37,12 @@ public class GameController {
         if (isAllPlayerReady()) {
             gameManager.startGame(users);
             gameManager.firstDeal();
-        }
-        ArrayList<Player> players = gameManager.getPlayers();
-        for(Player player : players){
-            // destination에 무엇이 들어가야 하는지 결정 필요
-            simpMessagingTemplate.convertAndSendToUser(player.getSessionId(),"", new PlayerStateDTO(player));
+
+            ArrayList<Player> players = gameManager.getPlayers();
+            for(Player player : players){
+                // destination에 무엇이 들어가야 하는지 결정 필요
+                simpMessagingTemplate.convertAndSendToUser(player.getSessionId(),"", new PlayerStateDTO(player));
+            }
         }
     }
 
